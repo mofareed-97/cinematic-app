@@ -1,31 +1,20 @@
-import { StyleSheet } from 'react-native';
+import React from "react"
+import { SafeAreaView } from "react-native"
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import StyledText from "@/components/ui/text"
+import StyledView from "@/components/ui/view"
+import colors from "@/components/colors"
+import Carousel from "@/components/home/carousel"
+import List from "@/components/home/list"
 
-export default function TabOneScreen() {
+export default function HomePage() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
-  );
+    <SafeAreaView style={{ backgroundColor: colors.tintColor, flex: 1 }}>
+      <StyledView className="flex-1">
+        {/* <StyledText className="">Home Page</StyledText> */}
+        <Carousel />
+        <List />
+      </StyledView>
+    </SafeAreaView>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
