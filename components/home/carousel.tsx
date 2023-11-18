@@ -3,7 +3,7 @@ import { FlatList, Text, View } from "react-native"
 import { Image } from "expo-image"
 import { LinearGradient } from "expo-linear-gradient"
 
-import { IMAGE_URL } from "@/lib/utils"
+import { cn, IMAGE_URL } from "@/lib/utils"
 import useUpcoming from "@/hooks/useUpcoming"
 
 import StyledText from "../ui/text"
@@ -19,9 +19,14 @@ export default function Carousel() {
       <View className="py-10">
         <FlatList
           data={data}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             return (
-              <View className="relative mr-10 overflow-hidden rounded-2xl">
+              <View
+                className={cn(
+                  "relative mr-10 overflow-hidden rounded-2xl",
+                  index === 0 ? "ml-6" : ""
+                )}
+              >
                 <LinearGradient
                   colors={[
                     "transparent",
