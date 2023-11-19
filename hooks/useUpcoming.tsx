@@ -17,7 +17,6 @@ export default function useUpcoming() {
         )
         return data.results
       } catch (err: any) {
-        console.log(err)
         throw new Error(err)
       }
     },

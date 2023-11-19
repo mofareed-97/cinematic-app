@@ -18,7 +18,6 @@ export default function useDiscover(genre: number) {
 
         return data.results
       } catch (err: any) {
-        console.log(err)
         throw new Error(err)
       }
     },

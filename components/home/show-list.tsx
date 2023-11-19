@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { Dimensions, Pressable, ScrollView, View } from "react-native"
-import { moviesGenres } from "@/constant/genre"
 import { ShowType } from "@/types"
 import { Ionicons } from "@expo/vector-icons"
 import { FlashList } from "@shopify/flash-list"
@@ -8,45 +7,22 @@ import { Image } from "expo-image"
 import { LinearGradient } from "expo-linear-gradient"
 
 import { cn, getGenre, IMAGE_URL } from "@/lib/utils"
-import useDiscover from "@/hooks/useDiscover"
 
 import Skeleton from "../ui/skeleton"
 import StyledText from "../ui/text"
 import StyledView from "../ui/view"
 
-export default function List() {
-  const [category, setCategory] = useState(28)
-  const { data, refetch, isLoading } = useDiscover(category)
-
-  // useEffect(() => {
-  //   refetch()
-  // }, [category])
+interface IProps {
+  data: ShowType[]
+  isLoading: boolean
+  title: string
+}
+export default function ShowList({ data, isLoading, title }: IProps) {
   return (
-    <StyledView className="h-full py-10">
-      <StyledText className="px-6 text-2xl">Categories</StyledText>
-      <StyledView className="my-6">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {moviesGenres.map((genre, i) => {
-            const isActive = genre.id === category
-            return (
-              <Pressable
-                onPress={() => setCategory(genre.id)}
-                key={genre.id}
-                className={cn(
-                  "rounded-lg px-6 py-2",
-                  i === 0 ? "ml-6" : "",
-                  isActive ? "bg-input" : ""
-                )}
-              >
-                <StyledText className={cn(isActive ? "text-primary" : "")}>
-                  {genre.name}
-                </StyledText>
-              </Pressable>
-            )
-          })}
-        </ScrollView>
-      </StyledView>
-
+    <StyledView className="my-1 py-3">
+      <StyledText className="mb-6 px-6 text-2xl font-bold text-muted-foreground">
+        {title}
+      </StyledText>
       <View style={{ flex: 1 }}>
         {data ? (
           <FlashList
@@ -56,19 +32,27 @@ export default function List() {
             )}
             horizontal
             estimatedItemSize={120}
-            // onLoad={({}) => (
-            //   <Skeleton className="h-48 w-44 bg-input opacity-60" />
-            // )}
             estimatedListSize={{
-              height: 300,
+              height: 250,
               width: Dimensions.get("screen").width,
             }}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.id.toString()}
           />
         ) : null}
-        {!isLoading ? (
-          <Skeleton className="h-64 w-44 bg-input opacity-60" />
+
+        {isLoading ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                className={cn(
+                  "mx-3 h-64 w-44 overflow-hidden rounded-lg bg-input opacity-60",
+                  index === 0 ? "ml-6" : ""
+                )}
+              />
+            ))}
+          </ScrollView>
         ) : null}
       </View>
     </StyledView>
@@ -81,7 +65,7 @@ function ShowCard({ item, index }: { item: ShowType; index: number }) {
   return (
     <StyledView
       className={cn(
-        "relative mx-3  w-44 overflow-hidden rounded-lg",
+        "relative mx-3 w-44 overflow-hidden rounded-lg",
         index === 0 ? "ml-6" : ""
       )}
     >
