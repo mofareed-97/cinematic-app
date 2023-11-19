@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react"
-import {
-  Dimensions,
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native"
+import { Dimensions, Pressable, ScrollView, View } from "react-native"
 import { moviesGenres } from "@/constant/genre"
 import { ShowType } from "@/types"
 import { Ionicons } from "@expo/vector-icons"
@@ -23,20 +16,16 @@ import StyledView from "../ui/view"
 
 export default function List() {
   const [category, setCategory] = useState(28)
-  const { data, refetch } = useDiscover(category)
+  const { data, refetch, isLoading } = useDiscover(category)
 
   // useEffect(() => {
   //   refetch()
   // }, [category])
   return (
-    <StyledView className="flex-1 py-10">
-      <View>
-        <StyledText className="px-6 text-2xl">Categories</StyledText>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="my-6"
-        >
+    <StyledView className="h-full py-10">
+      <StyledText className="px-6 text-2xl">Categories</StyledText>
+      <StyledView className="my-6">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {moviesGenres.map((genre, i) => {
             const isActive = genre.id === category
             return (
@@ -56,45 +45,46 @@ export default function List() {
             )
           })}
         </ScrollView>
+      </StyledView>
 
-        <StyledView style={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
+        {data ? (
           <FlashList
             data={data}
-            renderItem={({ item, index }) => {
-              return (
-                <StyledView
-                  className={cn(
-                    "relative mx-3 w-44 overflow-hidden rounded-lg bg-input",
-                    index === 0 ? "ml-6" : ""
-                  )}
-                >
-                  <ShowCard item={item} />
-                </StyledView>
-              )
-            }}
+            renderItem={({ item, index }) => (
+              <ShowCard item={item} index={index} />
+            )}
             horizontal
             estimatedItemSize={120}
+            // onLoad={({}) => (
+            //   <Skeleton className="h-48 w-44 bg-input opacity-60" />
+            // )}
             estimatedListSize={{
-              height: 200,
+              height: 300,
               width: Dimensions.get("screen").width,
             }}
-            // onLoad={({}) => (
-            // <Skeleton className="h-48 w-44 bg-input opacity-60" />
-            // )}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.id.toString()}
           />
-        </StyledView>
+        ) : null}
+        {!isLoading ? (
+          <Skeleton className="h-64 w-44 bg-input opacity-60" />
+        ) : null}
       </View>
     </StyledView>
   )
 }
 
-function ShowCard({ item }: { item: ShowType }) {
+function ShowCard({ item, index }: { item: ShowType; index: number }) {
   const genres = getGenre(item.genre_ids, "movie")
 
   return (
-    <>
+    <StyledView
+      className={cn(
+        "relative mx-3  w-44 overflow-hidden rounded-lg",
+        index === 0 ? "ml-6" : ""
+      )}
+    >
       <Image
         source={{ uri: IMAGE_URL + item.backdrop_path }}
         style={{
@@ -134,6 +124,6 @@ function ShowCard({ item }: { item: ShowType }) {
           ))}
         </View>
       </StyledView>
-    </>
+    </StyledView>
   )
 }
