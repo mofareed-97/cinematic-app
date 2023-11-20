@@ -1,7 +1,7 @@
 import React from "react"
 import { Text, View } from "react-native"
 import { ShowType } from "@/types"
-import { useQueries } from "@tanstack/react-query"
+import { useQueries, useQuery } from "@tanstack/react-query"
 
 import { client } from "@/lib/client"
 
@@ -9,8 +9,9 @@ const queryKeys = {
   trend: ["trend"],
   action: ["action"],
   comedy: ["comedy"],
+  search: ["search"],
 }
-export default function useShows() {
+export function useShowsList() {
   return useQueries({
     queries: [
       {
@@ -54,5 +55,24 @@ export default function useShows() {
         },
       },
     ],
+  })
+}
+
+export function useSearch(query: string) {
+  return useQuery({
+    queryKey: queryKeys.search,
+    queryFn: async (): Promise<ShowType[]> => {
+      console.log("running...")
+      try {
+        const { data } = await client(
+          `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`
+        )
+
+        return data.results
+      } catch (err: any) {
+        throw new Error(err)
+      }
+    },
+    enabled: !!query,
   })
 }

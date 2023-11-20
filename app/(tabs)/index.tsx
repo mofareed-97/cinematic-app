@@ -2,7 +2,7 @@ import React from "react"
 import { SafeAreaView, ScrollView } from "react-native"
 import { Image } from "expo-image"
 
-import useShows from "@/hooks/useShows"
+import { useShowsList } from "@/hooks/useShows"
 import StyledText from "@/components/ui/text"
 import StyledView from "@/components/ui/view"
 import colors from "@/components/colors"
@@ -10,7 +10,7 @@ import Carousel from "@/components/home/carousel"
 import ShowList from "@/components/home/show-list"
 
 export default function HomePage() {
-  const [trendShow, actionsShow, comedyShow] = useShows()
+  const [trendShow, actionsShow, comedyShow] = useShowsList()
 
   return (
     <SafeAreaView style={{ backgroundColor: colors.tintColor, flex: 1 }}>

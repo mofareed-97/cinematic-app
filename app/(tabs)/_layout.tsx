@@ -27,6 +27,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.tintColor,
           borderTopWidth: 0,
+          height: 100,
         },
         // tabBarLabelPosition: "beside-icon",
       }}
@@ -45,6 +46,16 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="browse"
+        options={{
+          title: "Browse",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="compass" color={color} />
+          ),
+        }}
+      />
+
       {/* <Tabs.Screen
         name="ai"
         options={{
@@ -63,13 +74,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="newspaper-o" color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
       />
     </Tabs>
