@@ -36,7 +36,7 @@ export default function HomePage() {
             </StyledView>
           </StyledView>
           <Carousel />
-          <StyledView>
+          <StyledView style={{}}>
             <ShowList
               data={trendShow.data!}
               isLoading={trendShow.isLoading}

@@ -10,6 +10,7 @@ const queryKeys = {
   action: ["action"],
   comedy: ["comedy"],
   search: ["search"],
+  details: ["details"],
 }
 export function useShowsList() {
   return useQueries({
@@ -74,5 +75,27 @@ export function useSearch(query: string) {
       }
     },
     enabled: !!query,
+  })
+}
+
+export function useShowDetails({
+  id,
+  media_type = "movie",
+}: {
+  id: string
+  media_type?: ShowType["media_type"]
+}) {
+  return useQuery({
+    queryKey: queryKeys.details,
+    queryFn: async (): Promise<ShowType> => {
+      try {
+        const { data } = await client(`/${media_type}/${id}?language=en-US`)
+
+        return data
+      } catch (err: any) {
+        console.log(err)
+        throw new Error(err)
+      }
+    },
   })
 }

@@ -49,7 +49,7 @@ export default function SearchPage() {
               {data.map((item, index) => {
                 if (!item.backdrop_path) return
                 return (
-                  <StyledView className="mb-6">
+                  <StyledView key={item.id} className="mb-6">
                     <ShowCard item={item} index={index} isVertical />
                   </StyledView>
                 )

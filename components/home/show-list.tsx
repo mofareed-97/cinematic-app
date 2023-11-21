@@ -20,7 +20,7 @@ interface IProps {
 }
 export default function ShowList({ data, isLoading, title }: IProps) {
   return (
-    <StyledView className="my-1 py-3">
+    <StyledView className="py-3">
       <StyledText className="mb-6 px-6 text-2xl font-bold text-muted-foreground">
         {title}
       </StyledText>
