@@ -1,14 +1,16 @@
 import React, { useLayoutEffect } from "react"
 import { Dimensions, Pressable, ScrollView, Text, View } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { ShowType } from "@/types"
+import { AntDesign, Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
 import { LinearGradient } from "expo-linear-gradient"
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router"
 
-import { IMAGE_URL } from "@/lib/utils"
-import { useShowDetails } from "@/hooks/useShows"
+import { cn, IMAGE_URL, toHoursAndMinutes } from "@/lib/utils"
+import { useCasts, useShowDetails } from "@/hooks/useShows"
 import StyledText from "@/components/ui/text"
 import StyledView from "@/components/ui/view"
+import { IconLoading } from "@/components/iconc"
 
 export default function ShowDetailsPage() {
   const { showId, media_type } = useLocalSearchParams<{
@@ -32,13 +34,30 @@ export default function ShowDetailsPage() {
         </Pressable>
       ),
 
-      headerRight: () => (
-        <Pressable className="h-12 w-12 items-center justify-center pr-[1px]">
-          <Ionicons name="heart-outline" color={"white"} size={28} />
-        </Pressable>
-      ),
+      headerRight: () =>
+        data ? (
+          <Pressable className="h-12 w-12 items-center justify-center pr-[1px]">
+            <Ionicons name="heart-outline" color={"white"} size={28} />
+          </Pressable>
+        ) : null,
     })
   }, [])
+
+  if (isLoading) {
+    return (
+      <StyledView className="flex-1 items-center justify-center">
+        <IconLoading className="animate-spin text-white" />
+      </StyledView>
+    )
+  }
+
+  if (!data && !isLoading) {
+    return (
+      <StyledView className="flex-1 items-center justify-center">
+        <StyledText>Failed to find the movie</StyledText>
+      </StyledView>
+    )
+  }
 
   return (
     <StyledView className="flex-1">
@@ -89,7 +108,7 @@ export default function ShowDetailsPage() {
           />
         </StyledView>
 
-        <StyledView className="relative z-10 px-6">
+        <StyledView className="relative z-10">
           <LinearGradient
             colors={[
               "hsl(222.2, 84%, 0%)",
@@ -106,18 +125,101 @@ export default function ShowDetailsPage() {
             end={{ x: 0.5, y: 1 }}
             // className="absolute bottom-0"
           />
-          <StyledText className="mb-8 text-center text-2xl font-bold">
-            {data?.title}
-          </StyledText>
+          <StyledView className="px-6">
+            <StyledView className="mb-3 flex-row items-center gap-4">
+              <StyledView className="flex-row items-center gap-2">
+                <Ionicons name="star" color={"orange"} size={18} />
+                <StyledText className="">
+                  {data?.vote_average.toFixed(1)}
+                </StyledText>
+              </StyledView>
+              <StyledText>•</StyledText>
+              <StyledText>
+                {data?.release_date
+                  ? new Date(data?.release_date).getFullYear()
+                  : null}
+              </StyledText>
+              {data?.runtime ? (
+                <>
+                  <StyledText>•</StyledText>
+                  <StyledText>{toHoursAndMinutes(data.runtime)} </StyledText>
+                </>
+              ) : null}
+            </StyledView>
+            <StyledText className="text-3xl font-bold">
+              {data?.title}
+            </StyledText>
+            {data?.tagline ? (
+              <StyledText className="mt-4 font-bold italic text-muted-foreground">
+                “{data?.tagline}”
+              </StyledText>
+            ) : null}
 
-          <StyledText className="mb-2 text-lg font-medium">
-            Story Line
-          </StyledText>
-          <StyledText className="font-medium leading-6 text-muted-foreground">
-            {data?.overview}
-          </StyledText>
+            <StyledView className="my-6 flex-row items-center gap-3">
+              {data?.genres.splice(0, 3).map((el) => (
+                <StyledView
+                  key={el.id}
+                  className="rounded-full bg-input px-4 py-2"
+                >
+                  <StyledText>{el.name}</StyledText>
+                </StyledView>
+              ))}
+            </StyledView>
+
+            <StyledText className="font-medium leading-6 text-muted-foreground">
+              {data?.overview}
+            </StyledText>
+          </StyledView>
+
+          <Casts id={data!.id.toString()} media_type={media_type} />
         </StyledView>
       </ScrollView>
+    </StyledView>
+  )
+}
+
+function Casts({
+  id,
+  media_type = "movie",
+}: {
+  id: string
+  media_type?: ShowType["media_type"]
+}) {
+  const { data, isLoading } = useCasts({ id, media_type })
+  return (
+    <StyledView className="my-6">
+      <StyledText className="px-6 text-xl font-bold">Cast</StyledText>
+      <StyledView className="my-4">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {data
+            ? data?.map((cast, index) => {
+                return (
+                  <StyledView
+                    key={cast.id}
+                    className={cn(
+                      "mr-4 items-center",
+                      index === 0 ? "ml-6" : ""
+                    )}
+                  >
+                    <Image
+                      source={{ uri: IMAGE_URL + cast.profile_path }}
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 50,
+                      }}
+                    />
+                    <StyledText className="mt-1 text-xs">
+                      {cast.name.length > 12
+                        ? cast.name.substring(0, 12) + "..."
+                        : cast.name}
+                    </StyledText>
+                  </StyledView>
+                )
+              })
+            : null}
+        </ScrollView>
+      </StyledView>
     </StyledView>
   )
 }

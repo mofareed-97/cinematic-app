@@ -18,6 +18,8 @@ import { SplashScreen, Stack } from "expo-router"
 
 import "../global.css"
 
+import { StatusBar } from "expo-status-bar"
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -66,9 +68,13 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <StatusBar style="light" />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="details/[showId]" options={{}} />
+        <Stack.Screen
+          name="details/[showId]"
+          options={{ headerTitle: "", headerStyle: {} }}
+        />
       </Stack>
     </ThemeProvider>
   )

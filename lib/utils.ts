@@ -29,3 +29,9 @@ export function getGenre(ids: number[], mediaType?: "tv" | "movie") {
   }
   return genreResults
 }
+
+export const toHoursAndMinutes = (totalMinutes: number) => {
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+  return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`
+}

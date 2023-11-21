@@ -1,6 +1,6 @@
 import React from "react"
 import { Text, View } from "react-native"
-import { ShowType } from "@/types"
+import { CastType, CreditsType, ShowDetailsType, ShowType } from "@/types"
 import { useQueries, useQuery } from "@tanstack/react-query"
 
 import { client } from "@/lib/client"
@@ -11,6 +11,7 @@ const queryKeys = {
   comedy: ["comedy"],
   search: ["search"],
   details: ["details"],
+  cast: ["cast"],
 }
 export function useShowsList() {
   return useQueries({
@@ -87,11 +88,35 @@ export function useShowDetails({
 }) {
   return useQuery({
     queryKey: queryKeys.details,
-    queryFn: async (): Promise<ShowType> => {
+    queryFn: async (): Promise<ShowDetailsType> => {
       try {
         const { data } = await client(`/${media_type}/${id}?language=en-US`)
 
         return data
+      } catch (err: any) {
+        console.log(err)
+        throw new Error(err)
+      }
+    },
+  })
+}
+
+export function useCasts({
+  id,
+  media_type = "movie",
+}: {
+  id: string
+  media_type?: ShowType["media_type"]
+}) {
+  return useQuery({
+    queryKey: queryKeys.cast,
+    queryFn: async (): Promise<CastType[]> => {
+      try {
+        const { data } = await client(
+          `/${media_type}/${id}/credits?language=en-US`
+        )
+
+        return data.cast
       } catch (err: any) {
         console.log(err)
         throw new Error(err)
